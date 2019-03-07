@@ -10,3 +10,4 @@ Features to add:
 - Make it so when you click a country it pauses the animation until you unclick the country
 - Clicking a country pulls up the information for that country
 - Globe can be sped up and slowed down with mouse
+- Highlight the country with the most golds that year.

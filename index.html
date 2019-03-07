@@ -59,6 +59,7 @@
             function enableRotation() {
                 d3.timer(function (elapsed) {
                     projection.rotate([config.speed * elapsed - 120, config.verticalTilt, config.horizontalTilt]);
+                    // comment out above to disable rotation ^^
                     svg.selectAll("path").attr("d", path);
                     drawMarkers();
                 });

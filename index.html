@@ -11,17 +11,46 @@
 <body>
     <div id="map"></div>
     <script>
+        var colorList = ['red', 'orange', 'blue'];
+        var selectedYear = '1801';
+        var mouseClick;
+        var keyClicked;
+        var mouseX = 0;
+        var mouseY = 0;
         var map = d3.geomap.choropleth()
             .geofile('/d3-geomap/topojson/world/countries.json')
-            .colors(['green', 'red'])
-            .column('1800')
-            .domain([0, 1])
-            .legend(false)
-            .unitId('iso3');
+            .colors(colorList)
+            .column(selectedYear)
+            .domain([0, 2])
+            .legend(true)
+            .unitId('iso3')
+            .rotate([mouseX,mouseY,0]);
 
-        d3.csv('/data/custom-domain.csv', function (error, data) {
+        d3.csv('/data/test.csv', function (error, data) {
             map.draw(d3.select('#map').datum(data));
         });
+
+        var mie = (navigator.appName == "Microsoft Internet Explorer") ? true : false;
+
+        if (!mie) {
+            document.captureEvents(Event.MOUSEMOVE);
+            document.captureEvents(Event.MOUSEDOWN);
+        }
+
+        document.onmousemove = function (e) {
+            mousePos(e);
+        };
+
+        function mousePos(e) {
+            if (!mie) {
+                mouseX = e.pageX;
+                mouseY = e.pageY;
+            } else {
+                mouseX = event.clientX + document.body.scrollLeft;
+                mouseY = event.clientY + document.body.scrollTop;
+            }
+            return true;
+        }
     </script>
 </body>
 

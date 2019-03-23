@@ -1,57 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <link href="/d3-geomap/css/d3.geomap.css" rel="stylesheet">
-    <script src="/d3-geomap/vendor/d3.geomap.dependencies.min.js"></script>
-    <script src="/d3-geomap/js/d3.geomap.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>D3 Visualization</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="index.js"></script>
 </head>
 
 <body>
-    <div id="map"></div>
-    <script>
-        var colorList = ['red', 'orange', 'blue'];
-        var selectedYear = '1801';
-        var mouseClick;
-        var keyClicked;
-        var mouseX = 0;
-        var mouseY = 0;
-        var map = d3.geomap.choropleth()
-            .geofile('/d3-geomap/topojson/world/countries.json')
-            .colors(colorList)
-            .column(selectedYear)
-            .domain([0, 2])
-            .legend(true)
-            .unitId('iso3')
-            .rotate([mouseX,mouseY,0]);
-
-        d3.csv('/data/test.csv', function (error, data) {
-            map.draw(d3.select('#map').datum(data));
-        });
-
-        var mie = (navigator.appName == "Microsoft Internet Explorer") ? true : false;
-
-        if (!mie) {
-            document.captureEvents(Event.MOUSEMOVE);
-            document.captureEvents(Event.MOUSEDOWN);
-        }
-
-        document.onmousemove = function (e) {
-            mousePos(e);
-        };
-
-        function mousePos(e) {
-            if (!mie) {
-                mouseX = e.pageX;
-                mouseY = e.pageY;
-            } else {
-                mouseX = event.clientX + document.body.scrollLeft;
-                mouseY = event.clientY + document.body.scrollTop;
-            }
-            return true;
-        }
-    </script>
+    <div id="canvas-svg"></div>
 </body>
 
 </html>

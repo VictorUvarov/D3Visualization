@@ -105,6 +105,8 @@ function ready(data) {
             $("#tooltip-container").html(html);
             $("#tooltip-container").show();
             $("#tooltip-container").css("background", "lightsteelblue");
+
+            translateToolbox()
         })
         .on("mouseout", function (data) {
             d3.select(this).classed("selected", false)
@@ -116,3 +118,20 @@ function ready(data) {
     Handle error
 */
 function handleError(data) {}
+
+/*
+    Translate the tooltip to where we hover
+*/
+function translateToolbox() {
+    if (d3.event.layerX < width / 2) {
+        d3.select("#tooltip-container")
+            .style("top", (d3.event.layerY + 15) + "px")
+            .style("left", (d3.event.layerX + 15) + "px");
+    } else {
+        var tooltip_width = $("#tooltip-container").width();
+        d3.select("#tooltip-container")
+            .style("top", (d3.event.layerY + 15) + "px")
+            .style("left", (d3.event.layerX - tooltip_width - 30) +
+                "px");
+    }
+}

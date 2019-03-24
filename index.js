@@ -69,7 +69,9 @@ function ready(data) {
         .enter().append("path")
         .attr("class", "country")
         .attr("d", path)
+        .data(olympics_data)
         .on("mouseover", function (d) {
+            console.log(d)
             d3.select(this).classed("selected", true)
         })
         .on("mouseout", function (d) {

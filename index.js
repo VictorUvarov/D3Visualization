@@ -4,7 +4,7 @@ var margin = {
     right: 50,
     left: 50
 };
-var height = 500;
+var height = 800;
 var width = 800;
 
 /*
@@ -16,7 +16,6 @@ var svg = d3.select("#map")
     .attr("height", height)
     .attr("width", width)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
 /*
     Read in world.topojson
@@ -34,7 +33,7 @@ Promise.all([
     and zoom in a certain amount (scale) 
 */
 var projection = d3.geoMercator()
-    .translate([width / 2 - 50, height / 2])
+    .translate([width / 2, height / 2])
     .scale(100)
 
 /*

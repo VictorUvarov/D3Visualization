@@ -8,14 +8,16 @@ data = requests.get(
 soup = BeautifulSoup(data.text, 'html.parser')
 
 data = []
+count = 1
 
 for country_list in soup.find_all('div', {'class': 'plainlist'}):
     for country_list_item in country_list.find_all('ul'):
         for li in country_list_item.find_all('li'):
             country_code = li.find_all('span')[0].text.strip()
             country_name = li.find_all('a')[0].get('title')
-            item = {'code': country_code, 'name': country_name}
+            item = {'id': count, 'code': country_code, 'name': country_name}
             data.append(item)
+            count = count + 1
             
 pp = pprint.PrettyPrinter(indent=4)
 pp.pprint(data)

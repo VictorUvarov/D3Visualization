@@ -1,19 +1,84 @@
-d3.csv("data/olympics.csv").then(function (data) {
-    dataSet = data.map(function (data) {
-        return {
-            year: new Date(+data.Year, 0, 1), // convert "Year" column to Date
-            country: data.Country, // strings are fine
-            gold: +data.Gold, // convert "Gold" column to number
-            silver: +data.Silver, // convert "Silver" column to number
-            bronze: +data.Bronze // convert "Bronze" column to number
-        };
-    });
-    dataSet.forEach(element => {
-        console.log(element);
-        // console.log(element.year);
-        // console.log(element.country);
-        // console.log(element.gold);
-        // console.log(element.silver);
-        // console.log(element.bronze);
-    });
-});
+var margin = {
+    top: 50,
+    bottom: 50,
+    right: 50,
+    left: 50
+};
+var height = 500;
+var width = 800;
+
+/*
+    Initialize the dimensions of the map
+    Add margins to height and width
+*/
+var svg = d3.select("#map")
+    .append("svg")
+    .attr("height", height)
+    .attr("width", width)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+/*
+    Read in world.topojson
+    Read in olympics.csv
+    Ready function handles data processing
+*/
+Promise.all([
+    d3.json("topojson/world.json"),
+    d3.csv("data/olympics.csv"),
+]).then(ready).catch(handleError)
+
+/*
+    Create a new projection using Mercator (geoMercator)
+    and center it (translate)
+    and zoom in a certain amount (scale) 
+*/
+var projection = d3.geoMercator()
+    .translate([width / 2 - 50, height / 2])
+    .scale(100)
+
+/*
+    create a path (geoPath)
+    using the projection
+*/
+var path = d3.geoPath()
+    .projection(projection)
+
+/*
+    Handle processing
+    data[0] = world.json data
+    data[1] = olympics.csv data
+*/
+function ready(data) {
+    var country_data = data[0]
+    var olympics_data = data[1]
+
+    /*
+        topojson.feature converts our RAW geo data into 
+        USEABLE geo data. Always pass it data, then
+        data.objcets.__something__ then get .features out 
+        of it.
+    */
+    var countries = topojson.feature(country_data, country_data.objects.countries).features
+
+    /*
+        Add a path for each country
+        Shapes -> path
+    */
+    svg.selectAll(".country")
+        .data(countries)
+        .enter().append("path")
+        .attr("class", "country")
+        .attr("d", path)
+        .on("mouseover", function (d) {
+            d3.select(this).classed("selected", true)
+        })
+        .on("mouseout", function (d) {
+            d3.select(this).classed("selected", false)
+        })
+}
+
+/*
+    Handle error
+*/
+function handleError(data) {}

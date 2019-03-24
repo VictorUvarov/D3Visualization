@@ -73,51 +73,18 @@ function ready(data) {
         .on("mouseover", function (data) {
             d3.select(this).classed("selected", true)
             var html = ""
-            html += "<div class=\"tooltip_kv\">";
-            html += "<span class=\"tooltip_key\">";
-            html += data.Country;
-            html += "</span>";
-            html += "</div>";
 
-            html += "<div class=\"tooltip_kv\">";
-            html += "<span class='tooltip_key'>";
-            html += "Year: "
-            html += "</span>";
-            html += "<span class=\"tooltip_value\">";
-            html += data.Year
-            html += "";
-            html += "</span>";
-            html += "</div>";
-
-            html += "<div class=\"tooltip_kv\">";
-            html += "<span class='tooltip_key'>";
-            html += "Gold Medals: "
-            html += "</span>";
-            html += "<span class=\"tooltip_value\">";
-            html += data.Gold
-            html += "";
-            html += "</span>";
-            html += "</div>";
-
-            html += "<div class=\"tooltip_kv\">";
-            html += "<span class='tooltip_key'>";
-            html += "Silver Medals: "
-            html += "</span>";
-            html += "<span class=\"tooltip_value\">";
-            html += data.Silver
-            html += "";
-            html += "</span>";
-            html += "</div>";
-
-            html += "<div class=\"tooltip_kv\">";
-            html += "<span class='tooltip_key'>";
-            html += "Bronze Medals: "
-            html += "</span>";
-            html += "<span class=\"tooltip_value\">";
-            html += data.Bronze
-            html += "";
-            html += "</span>";
-            html += "</div>";
+            for(var key in data){
+                html += "<div class=\"tooltip_kv\">";
+                html += "<span class='tooltip_key'>";
+                html += key + ": " 
+                html += "</span>";
+                html += "<span class=\"tooltip_value\">";
+                html += data[key]
+                html += "";
+                html += "</span>";
+                html += "</div>";
+            }
 
             $("#tooltip-container").html(html);
             $(this).attr("fill-opacity", "0.7");

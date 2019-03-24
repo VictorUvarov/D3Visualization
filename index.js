@@ -28,6 +28,7 @@ var svg = d3.select("#map")
 Promise.all([
     d3.json("topojson/world.json"),
     d3.csv("data/olympics.csv"),
+    d3.csv("data/countries.csv")
 ]).then(ready).catch(handleError)
 
 /*
@@ -54,6 +55,8 @@ var path = d3.geoPath()
 function ready(data) {
     var country_data = data[0]
     var olympics_data = data[1]
+    var country_name_data = data[2]
+    console.log(country_name_data)
 
     /*
         topojson.feature converts our RAW geo data into 
@@ -81,6 +84,8 @@ function ready(data) {
                 Loop through each key in the current data object
                 and create a simple div to be displayed
             */
+
+            // TODO: this doesn't map the correct countries
             for (var key in data) {
                 html += "<div class=\"tooltip_kv\">";
                 html += "<span class='tooltip_key'>";
@@ -99,7 +104,7 @@ function ready(data) {
             */
             $("#tooltip-container").html(html);
             $("#tooltip-container").show();
-            $("#tooltip-container").css("background","lightsteelblue");
+            $("#tooltip-container").css("background", "lightsteelblue");
         })
         .on("mouseout", function (data) {
             d3.select(this).classed("selected", false)

@@ -69,13 +69,63 @@ function ready(data) {
         .enter().append("path")
         .attr("class", "country")
         .attr("d", path)
-        .data(olympics_data)
-        .on("mouseover", function (d) {
-            console.log(d)
+        .data(olympics_data) //now that it is drawn, change data to olympic data
+        .on("mouseover", function (data) {
             d3.select(this).classed("selected", true)
+            var html = ""
+            html += "<div class=\"tooltip_kv\">";
+            html += "<span class=\"tooltip_key\">";
+            html += data.Country;
+            html += "</span>";
+            html += "</div>";
+
+            html += "<div class=\"tooltip_kv\">";
+            html += "<span class='tooltip_key'>";
+            html += "Year: "
+            html += "</span>";
+            html += "<span class=\"tooltip_value\">";
+            html += data.Year
+            html += "";
+            html += "</span>";
+            html += "</div>";
+
+            html += "<div class=\"tooltip_kv\">";
+            html += "<span class='tooltip_key'>";
+            html += "Gold Medals: "
+            html += "</span>";
+            html += "<span class=\"tooltip_value\">";
+            html += data.Gold
+            html += "";
+            html += "</span>";
+            html += "</div>";
+
+            html += "<div class=\"tooltip_kv\">";
+            html += "<span class='tooltip_key'>";
+            html += "Silver Medals: "
+            html += "</span>";
+            html += "<span class=\"tooltip_value\">";
+            html += data.Silver
+            html += "";
+            html += "</span>";
+            html += "</div>";
+
+            html += "<div class=\"tooltip_kv\">";
+            html += "<span class='tooltip_key'>";
+            html += "Bronze Medals: "
+            html += "</span>";
+            html += "<span class=\"tooltip_value\">";
+            html += data.Bronze
+            html += "";
+            html += "</span>";
+            html += "</div>";
+
+            $("#tooltip-container").html(html);
+            $(this).attr("fill-opacity", "0.7");
+            $("#tooltip-container").show();
         })
-        .on("mouseout", function (d) {
+        .on("mouseout", function (data) {
             d3.select(this).classed("selected", false)
+            $("#tooltip-container").hide();
         })
 }
 

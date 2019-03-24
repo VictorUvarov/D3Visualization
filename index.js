@@ -1,3 +1,6 @@
+/*
+    Default variables
+*/
 var margin = {
     top: 50,
     bottom: 50,
@@ -74,10 +77,14 @@ function ready(data) {
             d3.select(this).classed("selected", true)
             var html = ""
 
-            for(var key in data){
+            /* 
+                Loop through each key in the current data object
+                and create a simple div to be displayed
+            */
+            for (var key in data) {
                 html += "<div class=\"tooltip_kv\">";
                 html += "<span class='tooltip_key'>";
-                html += key + ": " 
+                html += key + ": "
                 html += "</span>";
                 html += "<span class=\"tooltip_value\">";
                 html += data[key]
@@ -86,9 +93,13 @@ function ready(data) {
                 html += "</div>";
             }
 
+            /*
+                Use Jquery to add our created html from above
+                to create the tool tip. Then show it.
+            */
             $("#tooltip-container").html(html);
-            $(this).attr("fill-opacity", "0.7");
             $("#tooltip-container").show();
+            $("#tooltip-container").css("background","lightsteelblue");
         })
         .on("mouseout", function (data) {
             d3.select(this).classed("selected", false)

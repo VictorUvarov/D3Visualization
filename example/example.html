@@ -74,6 +74,7 @@
 
         var SCALE = 0.7;
 
+        // https://en.wikipedia.org/wiki/Interpolation
         function Interpolate(start, end, steps, count) {
             var s = start,
                 e = end,
@@ -120,10 +121,12 @@
                 return d;
             }
         }
-
+        // first line of any csv = header fields
         var fields = Object.keys(data[0]);
+        // add css class to selectors?
         var option_select = d3.select('#selectors').append("select")
             .attr("class", "option-select");
+        //for each field add that to our dropdown selection
         for (var i = 0; i < fields.length; i++) {
             if (fields[i] !== config.state) {
                 var opt = option_select.append("option")
@@ -136,6 +139,7 @@
             }
         }
 
+        // default values
         var COLOR_FIRST = config.color1,
             COLOR_LAST = config.color2;
 
@@ -169,17 +173,22 @@
 
         var path = d3.geo.path();
 
+        // setup dimenions for our canvas
         var svg = d3.select("#canvas-svg").append("svg")
             .attr("width", width)
             .attr("height", height);
 
+        // lise of us state names ex/ {USA, United states}
         d3.tsv("https://s3-us-west-2.amazonaws.com/vida-public/geo/us-state-names.tsv", function (error,
-        names) {
+            names) {
+            // the topojson map used to draw the united states and all of its states
             d3.json("https://s3-us-west-2.amazonaws.com/vida-public/geo/us.json", function (error, us) {
 
                 var name_id_map = {};
                 var id_name_map = {};
 
+                // copy names.id in name map
+                // copy names.name in id map
                 for (var i = 0; i < names.length; i++) {
                     name_id_map[names[i].name] = names[i].id;
                     id_name_map[names[i].id] = names[i].name;
@@ -187,11 +196,15 @@
 
                 var dataMap = {};
 
+
                 data.forEach(function (d) {
+                    // make sure the state name is a valid name in our data set
                     if (!dataMap[d[config.state]]) {
                         dataMap[d[config.state]] = {};
                     }
 
+                    // for each column header in population.csv
+                    // filter out the column that is not in our config
                     for (var i = 0; i < Object.keys(data[0]).length; i++) {
                         if (Object.keys(data[0])[i] !== config.state) {
                             dataMap[d[config.state]][Object.keys(data[0])[i]] = +d[
@@ -203,11 +216,14 @@
                 function drawMap(dataColumn) {
                     var valueById = d3.map();
 
+                    // gives unique id's to each column? 
                     data.forEach(function (d) {
                         var id = name_id_map[d[config.state]];
                         valueById.set(id, +d[dataColumn]);
                     });
 
+                    // set the domain of our map to the min and max
+                    // for each column in population.csv
                     quantize.domain([d3.min(data, function (d) {
                             return +d[dataColumn]
                         }),
@@ -216,6 +232,7 @@
                         })
                     ]);
 
+                    // draw each state graphic
                     svg.append("g")
                         .attr("class", "states-choropleth")
                         .selectAll("path")
@@ -242,6 +259,7 @@
                             html += "</span>";
                             html += "</div>";
 
+                            // for each header column create a row in the tooltip
                             for (var i = 1; i < Object.keys(data[0]).length; i++) {
                                 html += "<div class=\"tooltip_kv\">";
                                 html += "<span class='tooltip_key'>";
@@ -255,15 +273,19 @@
                                 html += "</div>";
                             }
 
+                            // add tooltip to container and display it
                             $("#tooltip-container").html(html);
                             $(this).attr("fill-opacity", "0.7");
                             $("#tooltip-container").show();
 
+                            // this does nothing? delete this line
                             var coordinates = d3.mouse(this);
 
+                            // find the width of our map
                             var map_width = $('.states-choropleth')[0]
                                 .getBoundingClientRect().width;
 
+                            // move the tooltip to where the mouse is hovering
                             if (d3.event.layerX < map_width / 2) {
                                 d3.select("#tooltip-container")
                                     .style("top", (d3.event.layerY + 15) + "px")
@@ -277,10 +299,12 @@
                             }
                         })
                         .on("mouseout", function () {
+                            // hide the tooltip once we don't hover over a state
                             $(this).attr("fill-opacity", "1.0");
                             $("#tooltip-container").hide();
                         });
 
+                    // i assume this filters our states that are not in our data set?
                     svg.append("path")
                         .datum(topojson.mesh(us, us.objects.states, function (a, b) {
                             return a !== b;
@@ -292,11 +316,10 @@
 
                 drawMap(config.defaultValue);
 
+                // dropdown menu redraws map according to what dropdown is selected
                 option_select.on("change", function () {
                     drawMap($("#selectors").find(".option-select").val());
                 });
-
-
             });
         });
     });

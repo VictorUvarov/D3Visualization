@@ -11,3 +11,5 @@ Features to add:
 - Clicking a country pulls up the information for that country
 - Globe can be sped up and slowed down with mouse
 - Highlight the country with the most golds that year.
+
+[Demo Visualization](https://victoruvarov.github.io/D3Visualization/ "Demo Visualization")

@@ -56,7 +56,6 @@ function ready(data) {
     var country_data = data[0]
     var olympics_data = data[1]
     var country_name_data = data[2]
-    console.log(country_name_data)
 
     /*
         topojson.feature converts our RAW geo data into 

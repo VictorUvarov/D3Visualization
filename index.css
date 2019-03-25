@@ -23,3 +23,10 @@ svg {
     border-radius: 8px;
     pointer-events: none;
 }
+
+.year_option-select {
+    margin-top: 20px;
+    margin-left: 40px;
+    fill: #64b646;
+    width: auto;
+}

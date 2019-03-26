@@ -9,7 +9,7 @@ svg {
 }
 
 .selected {
-    fill: yellow;
+    fill: yellow !important;
 }
 
 #tooltip-container {

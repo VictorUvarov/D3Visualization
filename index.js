@@ -130,7 +130,7 @@ function ready(data) {
             /*
                 if we found a country for the current year
             */
-			var notfound = true;
+			var country_not_found = true;
 			
             /*
                 iterate through each country in olympics csv
@@ -150,7 +150,7 @@ function ready(data) {
                         html += "</span>";
                         html += "</div>";
                     }
-                    notfound = false;
+                    country_not_found = false;
                 }
             }
 
@@ -159,7 +159,7 @@ function ready(data) {
                 so we only know the date and country name
                 default the gold, silver, bronze to 0
             */
-            if (notfound) {
+            if (country_not_found) {
                 for (var key of keys) {
                     html += "<div class=\"tooltip_kv\">";
                     html += "<span class='tooltip_key'>";

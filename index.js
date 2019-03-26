@@ -56,7 +56,8 @@ function ready(data) {
     var country_data = data[0]
     var olympics_data = data[1]
 
-    var map = d3.map();
+	var map = d3.map();
+	
     olympics_data.forEach(function (d) {
         if (!map.has(d.Year)) {
             map.set(d.Year, [d.Country])
@@ -64,7 +65,6 @@ function ready(data) {
             map.get(d.Year).push(d.Country);
         }
     });
-
 
     // Displays the year selector
     var year_option_select = d3.select('#dropdown-menu').append("select")
@@ -74,7 +74,7 @@ function ready(data) {
         .append("option")
         .attr("value", function (d) {
             return d;
-        }) // WHats going to be stored in the option
+        }) // What is going to be stored in the option
         .text(function (d) {
             return d;
         }); // What text is going to be shown to the user
@@ -105,6 +105,7 @@ function ready(data) {
         .attr("class", "country")
         .attr("d", path)
         .on("mouseover", function (data) {
+			// add the css class selected to this object to color
             d3.select(this).classed("selected", true)
 
             /*
@@ -137,22 +138,22 @@ function ready(data) {
                 and check if the country is the same as the 
                 the current country and current year selected
             */
-            for (var i = 0; i < filtered_olympics_data.length; i++) {
-                if (filtered_olympics_data[i].Country == country_name) {
+		   	filtered_olympics_data.forEach(element => {
+				if (element.Country == country_name) {
                     for (var key of keys) {
                         html += "<div class=\"tooltip_kv\">";
                         html += "<span class='tooltip_key'>";
                         html += key + ": "
                         html += "</span>";
                         html += "<span class=\"tooltip_value\">";
-                        html += filtered_olympics_data[i][key]
+                        html += element[key]
                         html += "";
                         html += "</span>";
                         html += "</div>";
                     }
                     country_not_found = false;
                 }
-            }
+			});
 
             /*
                 We found no current country for this year
@@ -184,18 +185,11 @@ function ready(data) {
                 }        
             }
 
-
-            /*
-                Use Jquery to add our created html from above
-                to create the tool tip. Then show it.
-            */
-            $("#tooltip-container").html(html);
-            $("#tooltip-container").show();
-            $("#tooltip-container").css("background", "lightsteelblue");
-
+			displayToolTip(html);
             translateToolbox()
         })
         .on("mouseout", function (data) {
+			// remove the css class selected to this object to remove color
             d3.select(this).classed("selected", false)
             $("#tooltip-container").hide();
         })
@@ -229,4 +223,14 @@ function translateToolbox() {
 */
 function generateToolTip() {
 
+}
+
+/*
+	Display the tooltip with the generated html
+*/
+
+function displayToolTip(html){
+	$("#tooltip-container").html(html);
+	$("#tooltip-container").show();
+	$("#tooltip-container").css("background", "lightsteelblue");
 }

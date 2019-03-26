@@ -105,17 +105,21 @@ function ready(data) {
                 of each state in the properties  
             */
             country_name = data.properties.name;
-            //console.log(country_name);
+
+            /*
+                This string interpretation of the html
+                that will be appended to the tooltip
+            */
             var html = ""
 
 
             /*
-                not really the fields, but this is the first object
-                we can iterate over the keys since all objects are the 
-                same for each object
+                we can iterate over the same keys for each object
+                since all objects contain the same keys
             */
-            var fields = olympics_data[0]
-
+            var keys = Object.keys(olympics_data[0])
+         
+            
             /*
                 if we found a country for the current year
             */
@@ -128,7 +132,7 @@ function ready(data) {
             */
             for (var i = 0; i < olympics_data.length; i++) {
                 if (olympics_data[i].Country == country_name && olympics_data[i].Year == year) {
-                    for (var key in fields) {
+                    for (var key of keys) {
                         html += "<div class=\"tooltip_kv\">";
                         html += "<span class='tooltip_key'>";
                         html += key + ": "
@@ -149,7 +153,7 @@ function ready(data) {
                 default the gold, silver, bronze to 0
             */
             if (notfound) {
-                for (var key in fields) {
+                for (var key of keys) {
                     html += "<div class=\"tooltip_kv\">";
                     html += "<span class='tooltip_key'>";
                     html += key + ": "

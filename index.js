@@ -10,7 +10,7 @@ var margin = {
 var height = 800;
 var width = 800;
 
-var year = 2014;
+var YEAR = 2014;
 /*
     Initialize the dimensions of the map
     Add margins to height and width
@@ -85,9 +85,16 @@ function ready(data) {
         data.objcets.__something__ then get .features out 
         of it.
     */
-    var countries = topojson.feature(country_data, country_data.objects.countries).features
+	var countries = topojson.feature(country_data, country_data.objects.countries).features
 
-
+	/*
+		Filter the olympic data to include only data
+		for the selected year
+	*/
+	var filtered_olympics_data = olympics_data.filter(function (obj) {
+		return (obj.Year == YEAR);
+	});
+	
     /*
         Add a path for each country
         Shapes -> path
@@ -123,22 +130,22 @@ function ready(data) {
             /*
                 if we found a country for the current year
             */
-            var notfound = true;
-
+			var notfound = true;
+			
             /*
                 iterate through each country in olympics csv
                 and check if the country is the same as the 
                 the current country and current year selected
             */
-            for (var i = 0; i < olympics_data.length; i++) {
-                if (olympics_data[i].Country == country_name && olympics_data[i].Year == year) {
+            for (var i = 0; i < filtered_olympics_data.length; i++) {
+                if (filtered_olympics_data[i].Country == country_name) {
                     for (var key of keys) {
                         html += "<div class=\"tooltip_kv\">";
                         html += "<span class='tooltip_key'>";
                         html += key + ": "
                         html += "</span>";
                         html += "<span class=\"tooltip_value\">";
-                        html += olympics_data[i][key]
+                        html += filtered_olympics_data[i][key]
                         html += "";
                         html += "</span>";
                         html += "</div>";
@@ -164,7 +171,7 @@ function ready(data) {
                             html += country_name
                             break
                         case 'Year':
-                            html += year
+                            html += YEAR
                             break
                         default:
                             html += 0
@@ -214,4 +221,12 @@ function translateToolbox() {
             .style("left", (d3.event.layerX - tooltip_width - 30) +
                 "px");
     }
+}
+
+/*
+    Generates the tool tip by using jQuery to append
+    html to the #tooltip-container div
+*/
+function generateToolTip() {
+
 }

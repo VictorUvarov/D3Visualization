@@ -57,6 +57,25 @@ function ready(data) {
     var olympics_data = data[1]
     var country_name_data = data[2]
 
+    var map = d3.map();
+    olympics_data.forEach(function(d){
+        if (!map.has(d.Year)){
+            map.set(d.Year, [d.Country])
+        } else {
+            map.get(d.Year).push(d.Country);
+        }
+    });
+
+
+    // Displays the year selector
+    var year_option_select = d3.select('#dropdown-menu').append("select")
+    .selectAll("option")
+    .data(map.keys()) // was test-data
+    .enter()
+    .append("option")
+    .attr("value", function(d){ return d;}) // WHats going to be stored in the option
+    .text(function(d){ return d; });    // What text is going to be shown to the user
+
     /*
         topojson.feature converts our RAW geo data into 
         USEABLE geo data. Always pass it data, then

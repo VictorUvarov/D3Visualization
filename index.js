@@ -10,6 +10,7 @@ var margin = {
 var height = 800;
 var width = 800;
 
+var year = 2014;
 /*
     Initialize the dimensions of the map
     Add margins to height and width
@@ -26,9 +27,8 @@ var svg = d3.select("#map")
     Ready function handles data processing
 */
 Promise.all([
-    d3.json("topojson/world.json"),
+    d3.json("topojson/world-topo-min.json"),
     d3.csv("data/olympics.csv"),
-    d3.csv("data/countries.csv")
 ]).then(ready).catch(handleError)
 
 /*
@@ -55,7 +55,6 @@ var path = d3.geoPath()
 function ready(data) {
     var country_data = data[0]
     var olympics_data = data[1]
-    var country_name_data = data[2]
 
     var map = d3.map();
     olympics_data.forEach(function(d){
@@ -84,6 +83,7 @@ function ready(data) {
     */
     var countries = topojson.feature(country_data, country_data.objects.countries).features
 
+
     /*
         Add a path for each country
         Shapes -> path
@@ -93,28 +93,88 @@ function ready(data) {
         .enter().append("path")
         .attr("class", "country")
         .attr("d", path)
-        .data(olympics_data) //now that it is drawn, change data to olympic data
         .on("mouseover", function (data) {
             d3.select(this).classed("selected", true)
+            country_name = data.properties.name;
+            //console.log(country_name);
             var html = ""
 
             /* 
                 Loop through each key in the current data object
                 and create a simple div to be displayed
             */
+            //console.log(olympics_data);
+            var notfound = true;
+            for(var i=0; i < olympics_data.length; i++)
+            {
+                if( olympics_data[i].Country == country_name && olympics_data[i].Year == year)
+                {
+                    for(var key in olympics_data[i])
+                    {
+                        html += "<div class=\"tooltip_kv\">";
+                        html += "<span class='tooltip_key'>";
+                        html += key + ": "
+                        html += "</span>";
+                        html += "<span class=\"tooltip_value\">";
+                        html += olympics_data[i][key]
+                        html += "";
+                        html += "</span>";
+                        html += "</div>";
+                    }
+                    notfound = false;
+                }
+            }
 
-            // TODO: this doesn't map the correct countries
-            for (var key in data) {
+            if(notfound)
+            {
                 html += "<div class=\"tooltip_kv\">";
                 html += "<span class='tooltip_key'>";
-                html += key + ": "
-                html += "</span>";
-                html += "<span class=\"tooltip_value\">";
-                html += data[key]
-                html += "";
-                html += "</span>";
-                html += "</div>";
+                        html += "Country" + ": "
+                        html += "</span>";
+                        html += "<span class=\"tooltip_value\">";
+                        html += country_name
+                        html += "";
+                        html += "</span>";
+                        html += "</div>";
+                        html += "<div class=\"tooltip_kv\">";
+                        html += "<span class='tooltip_key'>";
+                        html += "Gold" + ": "
+                        html += "</span>";
+                        html += "<span class=\"tooltip_value\">";
+                        html += "0"
+                        html += "";
+                        html += "</span>";
+                        html += "</div>";
+                        html += "<div class=\"tooltip_kv\">";
+                        html += "<span class='tooltip_key'>";
+                        html += "Silver" + ": "
+                        html += "</span>";
+                        html += "<span class=\"tooltip_value\">";
+                        html += "0"
+                        html += "";
+                        html += "</span>";
+                        html += "</div>";
+                        html += "<div class=\"tooltip_kv\">";
+                        html += "<span class='tooltip_key'>";
+                        html += "Bronze" + ": "
+                        html += "</span>";
+                        html += "<span class=\"tooltip_value\">";
+                        html += "0"
+                        html += "";
+                        html += "</span>";
+                        html += "</div>";
             }
+            // for (var key in data) {
+            //     html += "<div class=\"tooltip_kv\">";
+            //     html += "<span class='tooltip_key'>";
+            //     html += key + ": "
+            //     html += "</span>";
+            //     html += "<span class=\"tooltip_value\">";
+            //     html += data[key]
+            //     html += "";
+            //     html += "</span>";
+            //     html += "</div>";
+            // }
 
             /*
                 Use Jquery to add our created html from above

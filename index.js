@@ -94,7 +94,41 @@ function ready(data) {
 	var filtered_olympics_data = olympics_data.filter(function (obj) {
 		return (obj.Year == YEAR);
 	});
-	
+    
+    /*
+        Create an array of the total medal counts for 
+        each country in the filtered olympic data
+    */
+    var countryMedals = [];
+    var keys = Object.keys(olympics_data[0])
+    filtered_olympics_data.forEach(element => {
+        var medalCount = 0;
+        for (var key of keys) {
+            switch(key) {
+                case 'Gold':
+                    medalCount += +element[key];
+                    break;
+                case 'Silver':
+                    medalCount += +element[key];
+                    break;
+                case 'Bronze':
+                    medalCount += +element[key];
+                    break;
+            }
+        }
+        countryMedals.push(medalCount);
+        medalCount = 0;
+    });
+
+    /*
+        Create the color scale using the min and max
+        of the total medal counts for the filtered
+        olympic data
+    */
+    var colorScale = d3.scaleLinear()
+        .range(['lightgreen', 'darkgreen'])
+        .domain([Math.min(...countryMedals), Math.max(...countryMedals)]);
+
     /*
         Add a path for each country
         Shapes -> path
@@ -104,6 +138,34 @@ function ready(data) {
         .enter().append("path")
         .attr("class", "country")
         .attr("d", path)
+        .style("fill", function(d) {
+            /*
+                Get the total medal count for a
+                country and assign it the correct color
+                based on the color scale
+            */
+            var medalCount = 0;
+            var keys = Object.keys(olympics_data[0])
+            filtered_olympics_data.forEach(element => {
+				if (element.Country == d.properties.name) {
+                    for (var key of keys) {
+                        switch(key)
+                        {
+                            case 'Gold':
+                                medalCount += +element[key];
+                                break;
+                            case 'Silver':
+                                medalCount += +element[key];
+                                break;
+                            case 'Bronze':
+                                medalCount += +element[key];
+                                break;
+                        }
+                    }
+                }
+			});
+            return colorScale(medalCount);
+        })
         .on("mouseover", function (data) {
 			// add the css class selected to this object to color
             d3.select(this).classed("selected", true)

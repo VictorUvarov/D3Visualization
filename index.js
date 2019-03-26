@@ -10,6 +10,7 @@ var margin = {
 var height = 800;
 var width = 800;
 
+var year = 2014;
 /*
     Initialize the dimensions of the map
     Add margins to height and width
@@ -28,7 +29,6 @@ var svg = d3.select("#map")
 Promise.all([
     d3.json("topojson/world-topo-min.json"),
     d3.csv("data/olympics.csv"),
-    d3.csv("data/countries.csv")
 ]).then(ready).catch(handleError)
 
 /*
@@ -55,11 +55,10 @@ var path = d3.geoPath()
 function ready(data) {
     var country_data = data[0]
     var olympics_data = data[1]
-    var country_name_data = data[2]
 
     var map = d3.map();
-    olympics_data.forEach(function(d){
-        if (!map.has(d.Year)){
+    olympics_data.forEach(function (d) {
+        if (!map.has(d.Year)) {
             map.set(d.Year, [d.Country])
         } else {
             map.get(d.Year).push(d.Country);
@@ -69,12 +68,16 @@ function ready(data) {
 
     // Displays the year selector
     var year_option_select = d3.select('#dropdown-menu').append("select")
-    .selectAll("option")
-    .data(map.keys()) // was test-data
-    .enter()
-    .append("option")
-    .attr("value", function(d){ return d;}) // WHats going to be stored in the option
-    .text(function(d){ return d; });    // What text is going to be shown to the user
+        .selectAll("option")
+        .data(map.keys()) // was test-data
+        .enter()
+        .append("option")
+        .attr("value", function (d) {
+            return d;
+        }) // WHats going to be stored in the option
+        .text(function (d) {
+            return d;
+        }); // What text is going to be shown to the user
 
     /*
         topojson.feature converts our RAW geo data into 
@@ -83,6 +86,7 @@ function ready(data) {
         of it.
     */
     var countries = topojson.feature(country_data, country_data.objects.countries).features
+
 
     /*
         Add a path for each country
@@ -93,28 +97,86 @@ function ready(data) {
         .enter().append("path")
         .attr("class", "country")
         .attr("d", path)
-        .data(olympics_data) //now that it is drawn, change data to olympic data
         .on("mouseover", function (data) {
             d3.select(this).classed("selected", true)
+
+            /*
+                the topojson file has the country names
+                of each state in the properties  
+            */
+            country_name = data.properties.name;
+
+            /*
+                This string interpretation of the html
+                that will be appended to the tooltip
+            */
             var html = ""
 
-            /* 
-                Loop through each key in the current data object
-                and create a simple div to be displayed
-            */
 
-            // TODO: this doesn't map the correct countries
-            for (var key in data) {
-                html += "<div class=\"tooltip_kv\">";
-                html += "<span class='tooltip_key'>";
-                html += key + ": "
-                html += "</span>";
-                html += "<span class=\"tooltip_value\">";
-                html += data[key]
-                html += "";
-                html += "</span>";
-                html += "</div>";
+            /*
+                we can iterate over the same keys for each object
+                since all objects contain the same keys
+            */
+            var keys = Object.keys(olympics_data[0])
+         
+            
+            /*
+                if we found a country for the current year
+            */
+            var notfound = true;
+
+            /*
+                iterate through each country in olympics csv
+                and check if the country is the same as the 
+                the current country and current year selected
+            */
+            for (var i = 0; i < olympics_data.length; i++) {
+                if (olympics_data[i].Country == country_name && olympics_data[i].Year == year) {
+                    for (var key of keys) {
+                        html += "<div class=\"tooltip_kv\">";
+                        html += "<span class='tooltip_key'>";
+                        html += key + ": "
+                        html += "</span>";
+                        html += "<span class=\"tooltip_value\">";
+                        html += olympics_data[i][key]
+                        html += "";
+                        html += "</span>";
+                        html += "</div>";
+                    }
+                    notfound = false;
+                }
             }
+
+            /*
+                We found no current country for this year
+                so we only know the date and country name
+                default the gold, silver, bronze to 0
+            */
+            if (notfound) {
+                for (var key of keys) {
+                    html += "<div class=\"tooltip_kv\">";
+                    html += "<span class='tooltip_key'>";
+                    html += key + ": "
+                    html += "</span>";
+                    html += "<span class=\"tooltip_value\">";
+                    switch (key) {
+                        case 'Country':
+                            html += country_name
+                            break
+                        case 'Year':
+                            html += year
+                            break
+                        default:
+                            html += 0
+                            break;
+                    }
+                    
+                    html += "";
+                    html += "</span>";
+                    html += "</div>";
+                }        
+            }
+
 
             /*
                 Use Jquery to add our created html from above

@@ -26,7 +26,7 @@ var svg = d3.select("#map")
     Ready function handles data processing
 */
 Promise.all([
-    d3.json("topojson/world.json"),
+    d3.json("topojson/world-topo-min.json"),
     d3.csv("data/olympics.csv"),
     d3.csv("data/countries.csv")
 ]).then(ready).catch(handleError)

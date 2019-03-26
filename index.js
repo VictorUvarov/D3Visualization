@@ -65,7 +65,7 @@ function isSelected() {
     selected = true;
 }
 
-function printMap(desired_year, data, countries) {
+function printMap(desired_year, countries) {
     
     svg = d3.select("#map")
     .append("svg")
@@ -76,9 +76,9 @@ function printMap(desired_year, data, countries) {
     if(selected) {
         filterData(desired_year);
     } else {
+        //desired_year = DEFAULT_YEAR;
         filterData(DEFAULT_YEAR);
     }
-
 
     var countryMedals = [];
     var keys = Object.keys(olympics_data[0])
@@ -295,14 +295,14 @@ function ready(data) {
         Shapes -> path
     */
    
-    printMap(filtered_olympics_data, data, countries); // initial drawing
+    printMap(DEFAULT_YEAR, countries); // initial drawing
     
     year_option_select.on("change", function() {
         /* The menu has been changed, now grab the year from the drop down menu */
         selected = true;
         
         /* Redraw the map with the selected year */
-        redraw($("#dropdown-menu").find(".year-option-select").val(), data, countries); 
+        redraw($("#dropdown-menu").find(".year-option-select").val(), countries); 
     });
 }
 
@@ -312,9 +312,9 @@ function ready(data) {
 function handleError(data) {}
 
 /* Redraws the map after the drop down menu is changed */
-function redraw(year, data, countries) {
+function redraw(year, countries) {
     d3.select('svg').remove();
-    printMap(year, data, countries);
+    printMap(year, countries);
 }
 
 /*

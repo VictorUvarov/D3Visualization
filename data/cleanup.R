@@ -7,6 +7,14 @@ winter_csv <- read_csv("./winter.csv")
 winter_csv <- winter_csv %>% mutate(Season = "Winter")
 df <- winter_csv %>% rbind(summer_csv)
 
+dictionary_csv <- read_csv("./dictionary.csv")
+colnames(dictionary_csv)[1] <- 'Country_Name'
+colnames(dictionary_csv)[2] <- 'Country'
+dictionary_csv <- dictionary_csv[1:2]
+df <- merge(x=df, y=dictionary_csv)
+colnames(df)[1] <- 'Code'
+colnames(df)[11] <- 'Country'
+
 # total number of medals
 df %>% count(Medal)
 
@@ -59,13 +67,3 @@ olympics_df[is.na(olympics_df)] <- 0
 # write csv
 write.csv(x=olympics_df, file="./olympics.csv", row.names=FALSE)
 
-# summer_olympics_csv <- dictionary_csv[,2]
-# summer_olympics_csv <- merge(x=summer_olympics_csv, y=summer_csv, by.x='Code', by.y='Country')
-# summer_olympics_csv <- summer_olympics_csv[,-(2:8)]
-# 
-# winter_olympics_csv <- dictionary_csv[,2]
-# winter_olympics_csv <- merge(x=winter_olympics_csv, y=winter_csv, by.x='Code', by.y='Country')
-# winter_olympics_csv <- winter_olympics_csv[,-(2:8)]
-# 
-# write.csv(x=summer_olympics_csv, file="./summer_olympics.csv", row.names=FALSE)
-# write.csv(x=winter_olympics_csv, file="./winter_olympics.csv", row.names=FALSE)

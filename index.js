@@ -57,8 +57,8 @@ function ready(data) {
     var olympics_data = data[1]
 
     var map = d3.map();
-    olympics_data.forEach(function(d){
-        if (!map.has(d.Year)){
+    olympics_data.forEach(function (d) {
+        if (!map.has(d.Year)) {
             map.set(d.Year, [d.Country])
         } else {
             map.get(d.Year).push(d.Country);
@@ -68,12 +68,16 @@ function ready(data) {
 
     // Displays the year selector
     var year_option_select = d3.select('#dropdown-menu').append("select")
-    .selectAll("option")
-    .data(map.keys()) // was test-data
-    .enter()
-    .append("option")
-    .attr("value", function(d){ return d;}) // WHats going to be stored in the option
-    .text(function(d){ return d; });    // What text is going to be shown to the user
+        .selectAll("option")
+        .data(map.keys()) // was test-data
+        .enter()
+        .append("option")
+        .attr("value", function (d) {
+            return d;
+        }) // WHats going to be stored in the option
+        .text(function (d) {
+            return d;
+        }); // What text is going to be shown to the user
 
     /*
         topojson.feature converts our RAW geo data into 
@@ -95,22 +99,36 @@ function ready(data) {
         .attr("d", path)
         .on("mouseover", function (data) {
             d3.select(this).classed("selected", true)
+
+            /*
+                the topojson file has the country names
+                of each state in the properties  
+            */
             country_name = data.properties.name;
             //console.log(country_name);
             var html = ""
 
-            /* 
-                Loop through each key in the current data object
-                and create a simple div to be displayed
+
+            /*
+                not really the fields, but this is the first object
+                we can iterate over the keys since all objects are the 
+                same for each object
             */
-            //console.log(olympics_data);
+            var fields = olympics_data[0]
+
+            /*
+                if we found a country for the current year
+            */
             var notfound = true;
-            for(var i=0; i < olympics_data.length; i++)
-            {
-                if( olympics_data[i].Country == country_name && olympics_data[i].Year == year)
-                {
-                    for(var key in olympics_data[i])
-                    {
+
+            /*
+                iterate through each country in olympics csv
+                and check if the country is the same as the 
+                the current country and current year selected
+            */
+            for (var i = 0; i < olympics_data.length; i++) {
+                if (olympics_data[i].Country == country_name && olympics_data[i].Year == year) {
+                    for (var key in fields) {
                         html += "<div class=\"tooltip_kv\">";
                         html += "<span class='tooltip_key'>";
                         html += key + ": "
@@ -125,57 +143,36 @@ function ready(data) {
                 }
             }
 
-            if(notfound)
-            {
-                // todo: add year
-                html += "<div class=\"tooltip_kv\">";
-                html += "<span class='tooltip_key'>";
-                        html += "Country" + ": "
-                        html += "</span>";
-                        html += "<span class=\"tooltip_value\">";
-                        html += country_name
-                        html += "";
-                        html += "</span>";
-                        html += "</div>";
-                        html += "<div class=\"tooltip_kv\">";
-                        html += "<span class='tooltip_key'>";
-                        html += "Gold" + ": "
-                        html += "</span>";
-                        html += "<span class=\"tooltip_value\">";
-                        html += "0"
-                        html += "";
-                        html += "</span>";
-                        html += "</div>";
-                        html += "<div class=\"tooltip_kv\">";
-                        html += "<span class='tooltip_key'>";
-                        html += "Silver" + ": "
-                        html += "</span>";
-                        html += "<span class=\"tooltip_value\">";
-                        html += "0"
-                        html += "";
-                        html += "</span>";
-                        html += "</div>";
-                        html += "<div class=\"tooltip_kv\">";
-                        html += "<span class='tooltip_key'>";
-                        html += "Bronze" + ": "
-                        html += "</span>";
-                        html += "<span class=\"tooltip_value\">";
-                        html += "0"
-                        html += "";
-                        html += "</span>";
-                        html += "</div>";
+            /*
+                We found no current country for this year
+                so we only know the date and country name
+                default the gold, silver, bronze to 0
+            */
+            if (notfound) {
+                for (var key in fields) {
+                    html += "<div class=\"tooltip_kv\">";
+                    html += "<span class='tooltip_key'>";
+                    html += key + ": "
+                    html += "</span>";
+                    html += "<span class=\"tooltip_value\">";
+                    switch (key) {
+                        case 'Country':
+                            html += country_name
+                            break
+                        case 'Year':
+                            html += year
+                            break
+                        default:
+                            html += 0
+                            break;
+                    }
+                    
+                    html += "";
+                    html += "</span>";
+                    html += "</div>";
+                }        
             }
-            // for (var key in data) {
-            //     html += "<div class=\"tooltip_kv\">";
-            //     html += "<span class='tooltip_key'>";
-            //     html += key + ": "
-            //     html += "</span>";
-            //     html += "<span class=\"tooltip_value\">";
-            //     html += data[key]
-            //     html += "";
-            //     html += "</span>";
-            //     html += "</div>";
-            // }
+
 
             /*
                 Use Jquery to add our created html from above

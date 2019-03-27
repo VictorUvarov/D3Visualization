@@ -24,13 +24,6 @@ svg {
     pointer-events: none;
 }
 
-.year-option-select {
-    margin-top: 20px;
-    margin-left: 40px;
-    fill: #64b646;
-    width: auto;
-}
-
 /* colorpicker styles */
 .colorpicker {
     background-color: #222222;

@@ -20,6 +20,10 @@ var filtered_olympics_data;
 var olympics_data;
 var country_data;
 var countries;
+// {name: , medals: }
+var gold_country;
+var silver_country;
+var bronze_country;
 
 /*
     Create a new projection using Mercator (geoMercator)
@@ -86,24 +90,43 @@ function printMap(countries) {
 
     var countryMedals = [];
     var keys = Object.keys(olympics_data[0])
+
+    // initialize the medal winners to the first country
+    gold_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Gold }
+    silver_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Silver }
+    bronze_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Bronze }
+
     filtered_olympics_data.forEach(element => {
         var medalCount = 0;
         for (var key of keys) {
             switch(key) {
                 case 'Gold':
                     medalCount += +element[key];
+                    if(+element[key] > gold_country.medals)
+                        gold_country = { name: element.Country, medals: +element[key] }
                     break;
                 case 'Silver':
                     medalCount += +element[key];
+                    if(+element[key] > silver_country.medals)
+                        silver_country = { name: element.Country, medals: +element[key] }
                     break;
                 case 'Bronze':
                     medalCount += +element[key];
+                    if(+element[key] > bronze_country.medals)
+                        bronze_country = { name: element.Country, medals: +element[key] }
                     break;
             }
         }
         countryMedals.push(medalCount);
         medalCount = 0;
     });
+
+    /*
+        Update medal winners list
+    */
+    $("#gold-medal-country-text").text(gold_country.name + ": " + gold_country.medals);
+    $("#silver-medal-country-text").text(silver_country.name + ": " + silver_country.medals);
+    $("#bronze-medal-country-text").text(bronze_country.name + ": " + bronze_country.medals);
 
     /*
         Create the color scale using the min and max

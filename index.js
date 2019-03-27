@@ -364,6 +364,7 @@ function drawColorPicker(){
     // select desired colorwheel
     var imageSrc = 'images/colorwheel.png';
     image.src = imageSrc;
+    $('.preview').css('backgroundColor', DEFAULT_COLOR_END);
     $('#picker').mousemove(function(e) { // mouse move handler
         if (bCanPreview) {
             // get coordinates of current position

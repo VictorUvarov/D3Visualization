@@ -14,6 +14,19 @@
 </head>
 
 <body>
+    <!-- preview element -->
+    <div class="preview"></div>
+    <!-- colorpicker element -->
+    <div class="colorpicker" style="display:none">
+        <canvas id="picker" var="1" width="300" height="300"></canvas>
+        <div class="controls">
+            <div><label>R</label> <input type="text" id="rVal" /></div>
+            <div><label>G</label> <input type="text" id="gVal" /></div>
+            <div><label>B</label> <input type="text" id="bVal" /></div>
+            <div><label>RGB</label> <input type="text" id="rgbVal" /></div>
+            <div><label>HEX</label> <input type="text" id="hexVal" /></div>
+        </div>
+    </div>
     <!-- Element that will contain dropdown-menu-->
     <div id= "dropdown-menu"></div>
     <!-- Element that will contain hover over tool tip-->

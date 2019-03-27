@@ -14,10 +14,42 @@
 </head>
 
 <body>
-    <!-- Element that will contain dropdown-menu-->
-    <div id= "dropdown-menu"></div>
-    <!-- Element that will contain hover over tool tip-->
-    <div id="tooltip-container"></div>
+    <div class="main-controls">
+        <!-- preview element -->
+        <div class="preview"></div>
+        <!-- colorpicker element -->
+        <div class="colorpicker" style="display:none">
+            <canvas id="picker" var="1" width="300" height="300"></canvas>
+            <div class="controls">
+                <div><label>R</label> <input type="text" id="rVal" /></div>
+                <div><label>G</label> <input type="text" id="gVal" /></div>
+                <div><label>B</label> <input type="text" id="bVal" /></div>
+                <div><label>RGB</label> <input type="text" id="rgbVal" /></div>
+                <div><label>HEX</label> <input type="text" id="hexVal" /></div>
+            </div>
+        </div>
+        <!-- Element that will contain dropdown-menu-->
+        <div id="dropdown-menu"></div>
+        <!-- Element that will contain hover over tool tip-->
+        <div id="tooltip-container"></div>
+        <!-- current country with most gold medals-->
+        <div id="gold-medal-country">
+            <img src="images/gold-medal.png" alt="gold medal" width="50px" height="50px">
+            <p id="gold-medal-country-text"> Gold: 0</p>
+        </div>
+        <!-- current country with most silver medals-->
+        <div id="silver-medal-country">
+            <img src="images/silver-medal.png" alt="silver medal" width="50px" height="50px">
+            <p id="silver-medal-country-text"> Silver: 0</p>
+        </div>
+        <!-- current country with most bronze medals-->
+        <div id="bronze-medal-country">
+            <img src="images/bronze-medal.png" alt="bronze medal" width="50px" height="50px">
+            <p id="bronze-medal-country-text"> Bronze: 0</p>
+        </div>
+
+    </div>
+
     <!-- Element that will contain the map drawing-->
     <div id="map"></div>
 

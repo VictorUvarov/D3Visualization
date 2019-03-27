@@ -10,13 +10,20 @@ var margin = {
 var height = 800;
 var width = 800;
 
-var DEFAULT_YEAR = 1896;
+var YEAR = 1896;
+var DEFAULT_COLOR_START = "white"
+var DEFAULT_COLOR_END = "DarkRed"
 var selected = false; // by default, changes when user selects year
 
 /* Global Data Variables */
 var filtered_olympics_data; 
 var olympics_data;
 var country_data;
+var countries;
+// {name: , medals: }
+var gold_country;
+var silver_country;
+var bronze_country;
 
 /*
     Create a new projection using Mercator (geoMercator)
@@ -39,6 +46,12 @@ var path = d3.geoPath()
     Add margins to height and width
 */
 var svg;
+
+/*
+    Draw the color picker and generate
+    its functionality
+*/
+drawColorPicker();
 
 /*
     Read in world.topojson
@@ -65,7 +78,7 @@ function isSelected() {
     selected = true;
 }
 
-function printMap(desired_year, countries) {
+function printMap(countries) {
     
     svg = d3.select("#map")
     .append("svg")
@@ -73,27 +86,34 @@ function printMap(desired_year, countries) {
     .attr("width", width)
     .append("g")
     
-    if(selected) {
-        filterData(desired_year);
-    } else {
-        //desired_year = DEFAULT_YEAR;
-        filterData(DEFAULT_YEAR);
-    }
+    filterData(YEAR);
 
     var countryMedals = [];
     var keys = Object.keys(olympics_data[0])
+
+    // initialize the medal winners to the first country
+    gold_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Gold }
+    silver_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Silver }
+    bronze_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Bronze }
+
     filtered_olympics_data.forEach(element => {
         var medalCount = 0;
         for (var key of keys) {
             switch(key) {
                 case 'Gold':
                     medalCount += +element[key];
+                    if(+element[key] > gold_country.medals)
+                        gold_country = { name: element.Country, medals: +element[key] }
                     break;
                 case 'Silver':
                     medalCount += +element[key];
+                    if(+element[key] > silver_country.medals)
+                        silver_country = { name: element.Country, medals: +element[key] }
                     break;
                 case 'Bronze':
                     medalCount += +element[key];
+                    if(+element[key] > bronze_country.medals)
+                        bronze_country = { name: element.Country, medals: +element[key] }
                     break;
             }
         }
@@ -102,13 +122,20 @@ function printMap(desired_year, countries) {
     });
 
     /*
+        Update medal winners list
+    */
+    $("#gold-medal-country-text").text(gold_country.name + ": " + gold_country.medals);
+    $("#silver-medal-country-text").text(silver_country.name + ": " + silver_country.medals);
+    $("#bronze-medal-country-text").text(bronze_country.name + ": " + bronze_country.medals);
+
+    /*
         Create the color scale using the min and max
         of the total medal counts for the filtered
         olympic data
     */
    
     var colorScale = d3.scaleLinear()
-        .range(['lightgreen', 'darkgreen'])
+        .range([DEFAULT_COLOR_START, DEFAULT_COLOR_END])
         .domain([Math.min(...countryMedals), Math.max(...countryMedals)]);
 
      /*
@@ -215,7 +242,7 @@ function printMap(desired_year, countries) {
                         html += country_name
                         break
                     case 'Year':
-                        html += desired_year
+                        html += YEAR
                         break
                     default:
                         html += 0
@@ -281,28 +308,29 @@ function ready(data) {
         data.objcets.__something__ then get .features out 
         of it.
     */
-	var countries = topojson.feature(country_data, country_data.objects.countries).features
+	countries = topojson.feature(country_data, country_data.objects.countries).features
 
 	/*
 		Filter the olympic data to include only data
 		for the selected year
     */
     /* Initialize the filtered data for default year */
-    filterData(DEFAULT_YEAR);    
+    filterData(YEAR);    
 
     /*
         Add a path for each country
         Shapes -> path
     */
    
-    printMap(DEFAULT_YEAR, countries); // initial drawing
+    printMap(countries); // initial drawing
     
     year_option_select.on("change", function() {
         /* The menu has been changed, now grab the year from the drop down menu */
         selected = true;
         
         /* Redraw the map with the selected year */
-        redraw($("#dropdown-menu").find(".year-option-select").val(), countries); 
+        YEAR = $("#dropdown-menu").find(".year-option-select").val()
+        redraw(); 
     });
 }
 
@@ -312,9 +340,9 @@ function ready(data) {
 function handleError(data) {}
 
 /* Redraws the map after the drop down menu is changed */
-function redraw(year, countries) {
+function redraw() {
     d3.select('svg').remove();
-    printMap(year, countries);
+    printMap(countries);
 }
 
 /*
@@ -335,19 +363,72 @@ function translateToolbox() {
 }
 
 /*
-    Generates the tool tip by using jQuery to append
-    html to the #tooltip-container div
-*/
-function generateToolTip() {
-
-}
-
-/*
 	Display the tooltip with the generated html
 */
-
 function displayToolTip(html){
 	$("#tooltip-container").html(html);
 	$("#tooltip-container").show();
 	$("#tooltip-container").css("background", "lightsteelblue");
+}
+
+/*
+    Generate the color picker 
+*/
+function drawColorPicker(){
+    var bCanPreview = true; // can preview
+    // create canvas and context objects
+    var canvas = document.getElementById('picker');
+    var ctx = canvas.getContext('2d');
+    // drawing active image
+    var image = new Image();
+    image.onload = function () {
+        ctx.drawImage(image, 0, 0, image.width, image.height); // draw the image on the canvas
+    }
+    // select desired colorwheel
+    var imageSrc = 'images/colorwheel.png';
+    image.src = imageSrc;
+    $('.preview').css('backgroundColor', DEFAULT_COLOR_END);
+    $('#picker').mousemove(function(e) { // mouse move handler
+        if (bCanPreview) {
+            // get coordinates of current position
+            var canvasOffset = $(canvas).offset();
+            var canvasX = Math.floor(e.pageX - canvasOffset.left);
+            var canvasY = Math.floor(e.pageY - canvasOffset.top);
+            // get current pixel
+            var imageData = ctx.getImageData(canvasX, canvasY, 1, 1);
+            var pixel = imageData.data;
+            // update preview color
+            var pixelColor = "rgb("+pixel[0]+", "+pixel[1]+", "+pixel[2]+")";
+            
+            $('.preview').css('backgroundColor', pixelColor);
+            // update controls
+            $('#rVal').val(pixel[0]);
+            $('#gVal').val(pixel[1]);
+            $('#bVal').val(pixel[2]);
+            $('#rgbVal').val(pixel[0]+','+pixel[1]+','+pixel[2]);
+            var dColor = pixel[2] + 256 * pixel[1] + 65536 * pixel[0];
+            $('#hexVal').val('#' + ('0000' + dColor.toString(16)).substr(-6));
+        }
+    });
+    $('#picker').click(function(e) { // click event handler
+        bCanPreview = !bCanPreview;
+        // get coordinates of current position
+        var canvasOffset = $(canvas).offset();
+        var canvasX = Math.floor(e.pageX - canvasOffset.left);
+        var canvasY = Math.floor(e.pageY - canvasOffset.top);
+        // get current pixel
+        var imageData = ctx.getImageData(canvasX, canvasY, 1, 1);
+        var pixel = imageData.data;
+        // update preview color
+        var pixelColor = "rgb("+pixel[0]+", "+pixel[1]+", "+pixel[2]+")";
+        var dColor = pixel[2] + 256 * pixel[1] + 65536 * pixel[0];
+        $('#hexVal').val('#' + ('0000' + dColor.toString(16)).substr(-6));
+        DEFAULT_COLOR_END = $('#hexVal').val()
+        $('.colorpicker').hide()
+        redraw();
+    });
+    $('.preview').click(function(e) { // preview click
+        $('.colorpicker').toggle("slow", "linear");
+        bCanPreview = true;
+    });
 }

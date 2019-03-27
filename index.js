@@ -424,6 +424,7 @@ function drawColorPicker(){
         var dColor = pixel[2] + 256 * pixel[1] + 65536 * pixel[0];
         $('#hexVal').val('#' + ('0000' + dColor.toString(16)).substr(-6));
         DEFAULT_COLOR_END = $('#hexVal').val()
+        $('.colorpicker').hide()
         redraw();
     });
     $('.preview').click(function(e) { // preview click

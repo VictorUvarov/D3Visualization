@@ -24,6 +24,27 @@ svg {
     pointer-events: none;
 }
 
+.main-controls {
+    display: flex;
+}
+
+/* Medal display Containers */
+#gold-medal-country {
+    display: flex;
+}
+
+#silver-medal-country {
+    display: flex;
+}
+
+#bronze-medal-country {
+    display: flex;
+}
+
+#dropdown-menu {
+    margin-right: 20px;
+}
+
 /* colorpicker styles */
 .colorpicker {
     background-color: #222222;
@@ -34,26 +55,31 @@ svg {
     position: absolute;
     width: 460px;
 }
+
 #picker {
     cursor: crosshair;
     float: left;
     margin: 10px;
     border: 0;
 }
+
 .controls {
     float: right;
     margin: 10px;
 }
-.controls > div {
+
+.controls>div {
     border: 1px solid #2F2F2F;
     margin-bottom: 5px;
     overflow: hidden;
     padding: 5px;
 }
+
 .controls label {
     float: left;
 }
-.controls > div input {
+
+.controls>div input {
     background-color: #121212;
     border: 1px solid #2F2F2F;
     color: #DDDDDD;
@@ -65,6 +91,7 @@ svg {
     text-transform: uppercase;
     width: 75px;
 }
+
 .preview {
     background: url("images/select.png") repeat scroll center center transparent;
     border-radius: 3px;
@@ -72,4 +99,5 @@ svg {
     cursor: pointer;
     height: 30px;
     width: 30px;
+    margin-right: 20px;
 }

@@ -102,3 +102,25 @@ svg {
     width: 30px;
     margin-right: 20px;
 }
+
+#legend {
+    margin-right: 20px;
+}
+
+.axis path, .axis line {
+	fill: none;
+	stroke: none; /*black;*/
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+	font-family: Consolas, courier;
+ 	fill: #000;
+	font-size: 9pt;
+}
+
+.legendTitle {
+	font-size: 15px;
+	fill: #4F4F4F;
+	font-weight: 12;
+}

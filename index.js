@@ -10,6 +10,8 @@ var margin = {
 var height = 800;
 var width = 800;
 
+
+/* Default Variables */
 var YEAR = 1896;
 var DEFAULT_COLOR_START = "white"
 var DEFAULT_COLOR_END = "DarkRed"
@@ -62,6 +64,42 @@ Promise.all([
     d3.json("topojson/world-topo-min.json"),
     d3.csv("data/olympics.csv"),
 ]).then(ready).catch(handleError)
+
+
+// TODO: rotate the legend and add text to it
+function displayLegend(color) {
+
+      var w = 140, h = 400;
+
+      var key = d3.select("#legend1").append("svg").attr("width", w).attr("height", h);
+
+      var legend = key.append("defs")
+        .append("svg:linearGradient")
+        .attr("id", "gradient")
+        .attr("x1", "100%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "100%")
+        .attr("spreadMethod", "pad");
+
+      legend.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "#FFFFFF")
+        .attr("stop-opacity", 1);
+
+      legend.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", color)
+        .attr("stop-opacity", 1);
+
+      key.append("rect")
+        .attr("width", w - 100)
+        .attr("height", h - 100)
+        .style("fill", "url(#gradient)")
+        .attr("transform", "translate(0,10)");
+
+}
+
 
 function filterData(year) {
     /*
@@ -321,8 +359,10 @@ function ready(data) {
         Add a path for each country
         Shapes -> path
     */
-   
     printMap(countries); // initial drawing
+
+    /* Add initial legend */
+    displayLegend(DEFAULT_COLOR_END);
     
     year_option_select.on("change", function() {
         /* The menu has been changed, now grab the year from the drop down menu */
@@ -343,6 +383,10 @@ function handleError(data) {}
 function redraw() {
     d3.select('svg').remove();
     printMap(countries);
+
+    /* Update Legend */
+    d3.select("#legend1").select("svg").remove();
+    displayLegend(DEFAULT_COLOR_END);
 }
 
 /*

@@ -368,7 +368,6 @@ function translateToolbox() {
 function displayToolTip(html){
 	$("#tooltip-container").html(html);
 	$("#tooltip-container").show();
-	$("#tooltip-container").css("background", "lightsteelblue");
 }
 
 /*

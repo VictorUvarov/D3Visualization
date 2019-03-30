@@ -25,22 +25,6 @@ svg {
     color: white;
 }
 
-.year-option-select {
-    margin-top: 20px;
-    margin-left: 40px;
-    fill: #64b646;
-    width: auto;
-}
-
-#container {
-    margin:10px 10%;
-    border:2px solid #000;
-    border-radius: 5px;
-    height:100%;
-    overflow:hidden;
-    background: #F0F8FF;
-}
-
 .main-controls {
     display: flex;
 }

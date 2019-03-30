@@ -93,7 +93,7 @@ function displayLegend(color) {
         .attr("stop-opacity", 1);
 
     key.append("rect")
-        .attr("width", w)
+        .attr("width", w - 50)
         .attr("height", h - 30)
         .style("fill", "url(#gradient)")
         .style("z-index", 9999)
@@ -121,7 +121,7 @@ function displayLegend(color) {
     // Text Anchored to the end of legend
     key.append("text")
         .attr("class", "legendTitle")
-        .attr("x", 300)
+        .attr("x", 250)
         .attr("y", 15)
         .attr("transform", "translate(0,30)")
         .style("text-anchor", "end")

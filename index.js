@@ -417,7 +417,7 @@ function handleError(data) {}
     Redraws the map after the drop down menu is changed 
 */
 function redraw(year) {
-    d3.select('svg').remove();
+    d3.selectAll('svg').remove();
     printMap(year);
 
     /* 

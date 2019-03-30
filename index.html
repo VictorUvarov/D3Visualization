@@ -25,8 +25,12 @@
         <div class="row">
             <div class="col-2">
                 <div class="main-controls">
-                    <!-- preview element -->
-                    <img class="preview" src="images/select.png" alt="color picker">
+                    <div class="color-container">
+                        <p class="preview-text">Color</p>
+                        <!-- preview element -->
+                        <div class="preview"></div>
+                    </div>
+
                     <!-- colorpicker element -->
                     <div class="colorpicker" style="display:none">
                         <canvas id="picker" var="1" width="300" height="300"></canvas>
@@ -41,22 +45,21 @@
                     <!-- TEST FOR LEGEND -->
                     <div id="legend"></div>
 
-                    <!-- Element that will contain hover over tool tip-->
-                    <div id="tooltip-container"></div>
-
                     <!-- current country with most gold medals-->
                     <div id="gold-medal-country">
-                        <img src="images/gold-medal.png" alt="gold medal" width="50px" height="50px">
+                        <img id="medal-image" src="images/gold-medal.png" alt="gold medal" width="50px" height="50px">
                         <p id="gold-medal-country-text"> Gold: 0</p>
                     </div>
                     <!-- current country with most silver medals-->
                     <div id="silver-medal-country">
-                        <img src="images/silver-medal.png" alt="silver medal" width="50px" height="50px">
+                        <img id="medal-image" src="images/silver-medal.png" alt="silver medal" width="50px"
+                            height="50px">
                         <p id="silver-medal-country-text"> Silver: 0</p>
                     </div>
                     <!-- current country with most bronze medals-->
                     <div id="bronze-medal-country">
-                        <img src="images/bronze-medal.png" alt="bronze medal" width="50px" height="50px">
+                        <img id="medal-image" src="images/bronze-medal.png" alt="bronze medal" width="50px"
+                            height="50px">
                         <p id="bronze-medal-country-text"> Bronze: 0</p>
                     </div>
 
@@ -67,8 +70,12 @@
             <div class="col-10">
                 <!-- Element that will contain the window and the map -->
                 <div id="container"></div>
+                <!-- Element that will contain hover over tool tip-->
+                <div id="tooltip-container"></div>
             </div>
+
         </div>
+
     </div>
 
     <!-- D3 js library for visualizations-->

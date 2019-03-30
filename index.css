@@ -37,8 +37,7 @@ p {
 }
 
 .year-option-select {
-    margin-top: 20px;
-    fill: #64b646;
+    margin: 5px;
     width: auto;
 }
 
@@ -182,9 +181,4 @@ p {
     font-size: 20px;
     border: solid gray;
     border-radius: 10px 10px 10px 10px;
-}
-
-#dropdown-menu {
-    margin-top: -15px;
-    margin-left: 5px;
 }

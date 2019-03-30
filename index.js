@@ -80,7 +80,7 @@ function displayLegend(color) {
       .attr("x2", "100%")
       .attr("y2", "100%")
       .attr("spreadMethod", "pad");
-
+      
     legend.append("stop")
       .attr("offset", "0%")
       .attr("stop-color", "#f7fcf0")
@@ -95,6 +95,7 @@ function displayLegend(color) {
       .attr("width", w)
       .attr("height", h - 30)
       .style("fill", "url(#gradient)")
+      .style("z-index", 9999)
       .attr("transform", "translate(0,10)");
 
     key.append("g")

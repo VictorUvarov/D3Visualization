@@ -27,13 +27,11 @@ svg {
 
 .year-option-select {
     margin-top: 20px;
-    margin-left: 40px;
     fill: #64b646;
     width: auto;
 }
 
 #container {
-    margin:10px 10%;
     border:2px solid #000;
     border-radius: 5px;
     height:100%;
@@ -41,25 +39,20 @@ svg {
     background: #F0F8FF;
 }
 
-.main-controls {
-    display: flex;
-}
-
 /* Medal display Containers */
 #gold-medal-country {
+    padding-top: 15px;
     display: flex;
 }
 
 #silver-medal-country {
+    padding-top: 15px;
     display: flex;
 }
 
 #bronze-medal-country {
+    padding-top: 15px;
     display: flex;
-}
-
-#dropdown-menu {
-    margin-right: 20px;
 }
 
 /* colorpicker styles */
@@ -71,6 +64,7 @@ svg {
     font-size: 12px;
     position: absolute;
     width: 460px;
+    z-index: 9999;
 }
 
 #picker {
@@ -119,10 +113,6 @@ svg {
     margin-right: 20px;
 }
 
-#legend {
-    margin-right: 20px;
-}
-
 .axis path, .axis line {
 	fill: none;
 	stroke: none; /*black;*/
@@ -140,3 +130,4 @@ svg {
 	fill: #4F4F4F;
 	font-weight: 12;
 }
+

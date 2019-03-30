@@ -1,38 +1,59 @@
-/* 
-    Global Data Variables 
+/*
+    Default variables
 */
+var margin = {
+    top: 50,
+    bottom: 50,
+    right: 50,
+    left: 50
+};
+var height = 800;
+var width = 800;
+
+
+/* Default Variables */
+var YEAR = 1896;
+var DEFAULT_COLOR_START = "white"
+var DEFAULT_COLOR_END = "DarkRed"
+var selected = false; // by default, changes when user selects year
+
+/* Global Data Variables */
 var filtered_olympics_data; 
 var olympics_data;
 var country_data;
-var topo,projection,path,svg,g;
-var DEFAULT_YEAR = 1896;
-var selected = false;
+var countries;
+// {name: , medals: }
+var gold_country;
+var silver_country;
+var bronze_country;
 
-var zoom = d3.zoom()
-    .scaleExtent([1, 9])
-    .on("zoom", move);
+/*
+    Create a new projection using Mercator (geoMercator)
+    and center it (translate)
+    and zoom in a certain amount (scale) 
+*/
+var projection = d3.geoMercator()
+    .translate([width / 2, height / 2])
+    .scale(100)
 
-var c = document.getElementById('container');
-var width = c.offsetWidth;
-var height = width / 2;
+/*
+    create a path (geoPath)
+    using the projection
+*/
+var path = d3.geoPath()
+    .projection(projection)
 
-function setup(width,height){
-  projection = d3.geoMercator()
-    .translate([(width/2), (height/2)])
-    .scale( width / 2 / Math.PI);
+/*
+    Initialize the dimensions of the map
+    Add margins to height and width
+*/
+var svg;
 
-  path = d3.geoPath().projection(projection);
-
-  svg = d3.select("#container").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .call(zoom)
-      .append("g");
-
-  g = svg.append("g")
-         .on("click", click);
-
-}
+/*
+    Draw the color picker and generate
+    its functionality
+*/
+drawColorPicker();
 
 /*
     Read in world.topojson
@@ -43,6 +64,73 @@ Promise.all([
     d3.json("topojson/world-topo-min.json"),
     d3.csv("data/olympics.csv"),
 ]).then(ready).catch(handleError)
+
+
+/* Draws the legend */
+function displayLegend(color) {
+
+    var w = 300, h = 50;
+
+    var key = d3.select("#legend")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
+
+    var legend = key.append("defs")
+      .append("svg:linearGradient")
+      .attr("id", "gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "100%")
+      .attr("y2", "100%")
+      .attr("spreadMethod", "pad");
+
+    legend.append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "#f7fcf0")
+      .attr("stop-opacity", 1);
+
+    legend.append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", color)
+      .attr("stop-opacity", 1);
+
+    key.append("rect")
+      .attr("width", w)
+      .attr("height", h - 30)
+      .style("fill", "url(#gradient)")
+      .attr("transform", "translate(0,10)");
+
+    key.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(0,30)")
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("");
+
+    // Text Anchored to the front of legend
+    key.append("text")
+    .attr("class", "legendTitle")
+    .attr("x", 0)
+    .attr("y", 15)
+    .attr("transform", "translate(0,30)")
+    .style("text-anchor", "left")
+    .text("Least Medals");
+
+    // Text Anchored to the end of legend
+    key.append("text")
+    .attr("class", "legendTitle")
+    .attr("x", 300)
+    .attr("y", 15)
+    .attr("transform", "translate(0,30)")
+    .style("text-anchor", "end")
+    .text("Most Medals");
+
+}
+
 
 function filterData(year) {
     /*
@@ -59,35 +147,42 @@ function isSelected() {
     selected = true;
 }
 
-function printMap(desired_year, countries) {
+function printMap(countries) {
+    
+    svg = d3.select("#map")
+    .append("svg")
+    .attr("height", height)
+    .attr("width", width)
+    .append("g")
+    
+    filterData(YEAR);
 
-    setup(width, height);
-
-    if(selected) {
-        filterData(desired_year);
-    } else {
-        filterData(DEFAULT_YEAR);
-    }
-
-    /*
-        Get the total medal counts for each
-        country who won medals in a desired
-        year
-    */
     var countryMedals = [];
     var keys = Object.keys(olympics_data[0])
+
+    // initialize the medal winners to the first country
+    gold_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Gold }
+    silver_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Silver }
+    bronze_country = { name: olympics_data[0].Country, medals: +olympics_data[0].Bronze }
+
     filtered_olympics_data.forEach(element => {
         var medalCount = 0;
         for (var key of keys) {
             switch(key) {
                 case 'Gold':
                     medalCount += +element[key];
+                    if(+element[key] > gold_country.medals)
+                        gold_country = { name: element.Country, medals: +element[key] }
                     break;
                 case 'Silver':
                     medalCount += +element[key];
+                    if(+element[key] > silver_country.medals)
+                        silver_country = { name: element.Country, medals: +element[key] }
                     break;
                 case 'Bronze':
                     medalCount += +element[key];
+                    if(+element[key] > bronze_country.medals)
+                        bronze_country = { name: element.Country, medals: +element[key] }
                     break;
             }
         }
@@ -96,20 +191,27 @@ function printMap(desired_year, countries) {
     });
 
     /*
+        Update medal winners list
+    */
+    $("#gold-medal-country-text").text(gold_country.name + ": " + gold_country.medals);
+    $("#silver-medal-country-text").text(silver_country.name + ": " + silver_country.medals);
+    $("#bronze-medal-country-text").text(bronze_country.name + ": " + bronze_country.medals);
+
+    /*
         Create the color scale using the min and max
         of the total medal counts for the filtered
         olympic data
     */
    
     var colorScale = d3.scaleLinear()
-        .range(['lightgreen', 'darkgreen'])
+        .range([DEFAULT_COLOR_START, DEFAULT_COLOR_END])
         .domain([Math.min(...countryMedals), Math.max(...countryMedals)]);
 
      /*
         Add a path for each country
         Shapes -> path
     */
-    g.selectAll(".country")
+    svg.selectAll(".country")
     .data(countries)
     .enter().append("path")
     .attr("class", "country")
@@ -144,6 +246,7 @@ function printMap(desired_year, countries) {
         return colorScale(medalCount);
     })
     .on("mouseover", function (data) {
+        // add the css class selected to this object to color
         d3.select(this).classed("selected", true)
 
         /*
@@ -208,7 +311,7 @@ function printMap(desired_year, countries) {
                         html += country_name
                         break
                     case 'Year':
-                        html += desired_year
+                        html += YEAR
                         break
                     default:
                         html += 0
@@ -225,6 +328,7 @@ function printMap(desired_year, countries) {
         translateToolbox()
     })
     .on("mouseout", function (data) {
+        // remove the css class selected to this object to remove color
         d3.select(this).classed("selected", false)
         $("#tooltip-container").hide();
     })
@@ -237,20 +341,14 @@ function printMap(desired_year, countries) {
     data[1] = olympics.csv data
 */
 function ready(data) {
-    /* 
-        Intializes global data variables 
-    */
+    /* Intializes global data variables */
     country_data = data[0]
     olympics_data = data[1]
 
-    /* 
-        Creates map for filtering drop down menu options 
-    */
+    /* Creates map for filtering drop down menu options */
 	var map = d3.map();
     
-    /* 
-        Filters unique values for drop down menu 
-    */
+    /* Filters unique values for drop down menu */
     olympics_data.forEach(function (d) {
         if (!map.has(d.Year)) {
             map.set(d.Year, [d.Country])
@@ -259,38 +357,51 @@ function ready(data) {
         }
     });
 
-    /* 
-        Displays the year selector 
-    */
+    /* Displays the year selector */
     var year_option_select = d3.select('#dropdown-menu').append("select").attr("class", "year-option-select");
         
     year_option_select.selectAll("option")
-        .data(map.keys())
+        .data(map.keys()) // was test-data
         .enter()
         .append("option")
         .attr("value", function (d) {
             return d;
-        })
+        }) // What is going to be stored in the option
         .text(function (d) {
             return d;
-        });
+        }); // What text is going to be shown to the user
 
-    filterData(DEFAULT_YEAR);    
+    /*
+        topojson.feature converts our RAW geo data into 
+        USEABLE geo data. Always pass it data, then
+        data.objcets.__something__ then get .features out 
+        of it.
+    */
+	countries = topojson.feature(country_data, country_data.objects.countries).features
 
-    var countries = topojson.feature(country_data, country_data.objects.countries).features
+	/*
+		Filter the olympic data to include only data
+		for the selected year
+    */
+    /* Initialize the filtered data for default year */
+    filterData(YEAR);    
 
-    d3.select(window).on("resize", throttle(DEFAULT_YEAR, countries));
+    /*
+        Add a path for each country
+        Shapes -> path
+    */
+    printMap(countries); // initial drawing
 
+    /* Add initial legend */
+    displayLegend(DEFAULT_COLOR_END);
+    
     year_option_select.on("change", function() {
-        /* 
-            The menu has been changed, now grab the year from the drop down menu 
-        */
+        /* The menu has been changed, now grab the year from the drop down menu */
         selected = true;
         
-        /* 
-            Redraw the map with the selected year 
-        */
-        redraw($("#dropdown-menu").find(".year-option-select").val(), countries); 
+        /* Redraw the map with the selected year */
+        YEAR = $("#dropdown-menu").find(".year-option-select").val()
+        redraw(); 
     });
 }
 
@@ -299,12 +410,14 @@ function ready(data) {
 */
 function handleError(data) {}
 
-/* 
-    Redraws the map after the drop down menu is changed 
-*/
-function redraw(year, countries) {
+/* Redraws the map after the drop down menu is changed */
+function redraw() {
     d3.select('svg').remove();
-    printMap(year, countries);
+    printMap(countries);
+
+    /* Update Legend */
+    d3.select("#legend").select("svg").remove();
+    displayLegend(DEFAULT_COLOR_END);
 }
 
 /*
@@ -325,54 +438,71 @@ function translateToolbox() {
 }
 
 /*
-    Generates the tool tip by using jQuery to append
-    html to the #tooltip-container div
-*/
-function generateToolTip() {
-
-}
-
-/*
 	Display the tooltip with the generated html
 */
-
 function displayToolTip(html){
 	$("#tooltip-container").html(html);
 	$("#tooltip-container").show();
-	$("#tooltip-container").css("background", "lightsteelblue");
 }
 
-var throttleTimer;
-function throttle(desired_year, countries) {
-  window.clearTimeout(throttleTimer);
-    throttleTimer = window.setTimeout(function() {
-      redraw(desired_year, countries);
-    }, 200);
+/*
+    Generate the color picker 
+*/
+function drawColorPicker(){
+    var bCanPreview = true; // can preview
+    // create canvas and context objects
+    var canvas = document.getElementById('picker');
+    var ctx = canvas.getContext('2d');
+    // drawing active image
+    var image = new Image();
+    image.onload = function () {
+        ctx.drawImage(image, 0, 0, image.width, image.height); // draw the image on the canvas
+    }
+    // select desired colorwheel
+    var imageSrc = 'images/colorwheel.png';
+    image.src = imageSrc;
+    $('.preview').css('backgroundColor', DEFAULT_COLOR_END);
+    $('#picker').mousemove(function(e) { // mouse move handler
+        if (bCanPreview) {
+            // get coordinates of current position
+            var canvasOffset = $(canvas).offset();
+            var canvasX = Math.floor(e.pageX - canvasOffset.left);
+            var canvasY = Math.floor(e.pageY - canvasOffset.top);
+            // get current pixel
+            var imageData = ctx.getImageData(canvasX, canvasY, 1, 1);
+            var pixel = imageData.data;
+            // update preview color
+            var pixelColor = "rgb("+pixel[0]+", "+pixel[1]+", "+pixel[2]+")";
+            
+            $('.preview').css('backgroundColor', pixelColor);
+            // update controls
+            $('#rVal').val(pixel[0]);
+            $('#gVal').val(pixel[1]);
+            $('#bVal').val(pixel[2]);
+            $('#rgbVal').val(pixel[0]+','+pixel[1]+','+pixel[2]);
+            var dColor = pixel[2] + 256 * pixel[1] + 65536 * pixel[0];
+            $('#hexVal').val('#' + ('0000' + dColor.toString(16)).substr(-6));
+        }
+    });
+    $('#picker').click(function(e) { // click event handler
+        bCanPreview = !bCanPreview;
+        // get coordinates of current position
+        var canvasOffset = $(canvas).offset();
+        var canvasX = Math.floor(e.pageX - canvasOffset.left);
+        var canvasY = Math.floor(e.pageY - canvasOffset.top);
+        // get current pixel
+        var imageData = ctx.getImageData(canvasX, canvasY, 1, 1);
+        var pixel = imageData.data;
+        // update preview color
+        var pixelColor = "rgb("+pixel[0]+", "+pixel[1]+", "+pixel[2]+")";
+        var dColor = pixel[2] + 256 * pixel[1] + 65536 * pixel[0];
+        $('#hexVal').val('#' + ('0000' + dColor.toString(16)).substr(-6));
+        DEFAULT_COLOR_END = $('#hexVal').val()
+        $('.colorpicker').hide()
+        redraw();
+    });
+    $('.preview').click(function(e) { // preview click
+        $('.colorpicker').toggle("slow", "linear");
+        bCanPreview = true;
+    });
 }
-
-function move() {
-
-    var t = [d3.event.transform.x,d3.event.transform.y];
-    var s = d3.event.transform.k;
-    zscale = s;
-    var h = height/4;
-  
-    t[0] = Math.min(
-      (width/height)  * (s - 1), 
-      Math.max( width * (1 - s), t[0] )
-    );
-  
-    t[1] = Math.min(
-      h * (s - 1) + h * s, 
-      Math.max(height  * (1 - s) - h * s, t[1])
-    );
-  
-    g.attr("transform", "translate(" + t + ")scale(" + s + ")");
-  
-}
-
-function click() {
-    var latlon = projection.invert(d3.mouse(this));
-    console.log(latlon);
-}
-  

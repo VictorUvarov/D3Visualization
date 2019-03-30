@@ -303,9 +303,6 @@ function handleError(data) {}
     Redraws the map after the drop down menu is changed 
 */
 function redraw(year, countries) {
-    width = c.offsetWidth;
-    height = width / 2;
-    setup(width,height);
     d3.select('svg').remove();
     printMap(year, countries);
 }

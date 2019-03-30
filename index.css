@@ -183,3 +183,8 @@ p {
     border: solid gray;
     border-radius: 10px 10px 10px 10px;
 }
+
+#dropdown-menu {
+    margin-top: -15px;
+    margin-left: 5px;
+}

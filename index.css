@@ -1,5 +1,16 @@
+@import url('https://fonts.googleapis.com/css?family=Germania+One|Lato|Montserrat');
+
 svg {
     background: white;
+}
+
+h1 {
+    font-family: 'Lato', sans-serif;
+    font-size: 50px;
+}
+
+p {
+    font-family: 'Lato', sans-serif;
 }
 
 .country {
@@ -26,40 +37,57 @@ svg {
 }
 
 .year-option-select {
-    margin-top: 20px;
-    margin-left: 40px;
-    fill: #64b646;
+    margin-left: 5px;
     width: auto;
+    height: 35px;
+    border-radius: 5px;
 }
 
 #container {
-    margin:10px 10%;
-    border:2px solid #000;
+    border: 2px solid #000;
     border-radius: 5px;
-    height:100%;
-    overflow:hidden;
+    overflow: hidden;
     background: #F0F8FF;
-}
-
-.main-controls {
-    display: flex;
 }
 
 /* Medal display Containers */
 #gold-medal-country {
+    margin-top: 15px;
     display: flex;
 }
 
 #silver-medal-country {
+    margin-top: 15px;
     display: flex;
 }
 
 #bronze-medal-country {
+    margin-top: 15px;
     display: flex;
 }
 
-#dropdown-menu {
-    margin-right: 20px;
+#medal-image {
+    border-style: solid;
+    border-radius: 10px;
+    border-color: gray;
+}
+
+#gold-medal-country-text {
+    font-family: 'Lato', sans-serif;
+    font-size: large;
+    margin: 12px 0 0 12px;
+}
+
+#silver-medal-country-text {
+    font-family: 'Lato', sans-serif;
+    font-size: large;
+    margin: 12px 0 0 12px;
+}
+
+#bronze-medal-country-text {
+    font-family: 'Lato', sans-serif;
+    font-size: large;
+    margin: 12px 0 0 12px;
 }
 
 /* colorpicker styles */
@@ -71,6 +99,7 @@ svg {
     font-size: 12px;
     position: absolute;
     width: 460px;
+    z-index: 9999;
 }
 
 #picker {
@@ -116,27 +145,49 @@ svg {
     cursor: pointer;
     height: 30px;
     width: 30px;
+    margin-top: 2px;
     margin-right: 20px;
+    margin-left: 5px;
 }
 
-#legend {
-    margin-right: 20px;
-}
-
-.axis path, .axis line {
-	fill: none;
-	stroke: none; /*black;*/
-	shape-rendering: crispEdges;
+.axis path,
+.axis line {
+    fill: none;
+    stroke: none;
+    /*black;*/
+    shape-rendering: crispEdges;
 }
 
 .axis text {
-	font-family: Consolas, courier;
- 	fill: #000;
-	font-size: 9pt;
+    font-family: Consolas, courier;
+    fill: #000;
+    font-size: 9pt;
 }
 
 .legendTitle {
-	font-size: 15px;
-	fill: #4F4F4F;
-	font-weight: 12;
+    font-size: 15px;
+    fill: #4F4F4F;
+    font-weight: 12;
+}
+
+#legend {
+    padding-top: 10px;
+}
+
+.color-container {
+    display: flex;
+}
+
+.preview-text {
+    font-size: 20px;
+    border: solid gray;
+    border-radius: 10px;
+}
+
+.description {
+    margin-top: 20px;
+    border: solid gray;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 10px;
+    padding: 5px;
 }

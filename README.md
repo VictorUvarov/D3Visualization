@@ -18,3 +18,8 @@ Questions we are answering:
 - Which countries constantly dominate the olympics?
 
 [View Live Demo](https://victoruvarov.github.io/D3Visualization/ "Demo Visualization")
+
+## Contributors
+- [Victor Uvarov](https://github.com/VictorUvarov)
+- [Gabe Aguirre](https://github.com/gabe-aguirre-530)
+- [Mitch Manzanares](https://github.com/mitmanz)

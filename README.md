@@ -1,3 +1,7 @@
+Olympic medals Distribution Map
+
+![Screen Shot 2021-04-05 at 4 54 43 PM](https://user-images.githubusercontent.com/35702719/113640171-b5a43900-962f-11eb-8761-7e74f67f0492.png)
+
 # D3 World Map
 - This is a D3 (v4) based animated Topographic map of the world. 
 - This solution also allows you to change the color and year to better understand the data.
